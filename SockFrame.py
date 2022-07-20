@@ -6,11 +6,17 @@ class SocketHandler:
 	def __init__(self, address:str, port:int=8765):
 		self.address = address
 		self.port = port
+		self.Paths = {}
 
-	def reciever(self, type, func):
-		def inner(wsmessage):
-			func(wsmessage)
-		return inner
+	def reciever(self, func):
+		def wrapper():
+			self.Paths[func.__name__] = func
+		return wrapper
+
+	def decorator(self, func):
+		def wrappy(*args, **kwargs):
+			return func(*args, **kwargs)
+		return wrappy
 
 	async def handler(self, websocket):
 		while True:
